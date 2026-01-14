@@ -36,18 +36,24 @@ if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
 # AIDE-FRAME IMPORTS
 # =============================================================================
 
-from aide_frame import paths
+from aide_frame import paths, http_routes
 paths.init(SCRIPT_DIR)
 
-# Register help directory
-paths.register("HELP_DIR", os.path.join(paths.APP_DIR, "help"))
+# DOCS_DIR and HELP_DIR are auto-registered by DocsConfig if they exist in APP_DIR
 
 from aide_frame.log import logger, set_level
 from aide_frame.config import load_config
 from aide_frame.web_request import fetch_json
 
-# Local imports
-import help_viewer
+# HTTP routes configuration for docs and help
+# section_defs not needed - auto-discovered from docs/ directory structure
+ROUTES_CONFIG = http_routes.DocsConfig(
+    app_name="Hello",
+    back_link="/",
+    back_text="Home",
+    docs_dir_key="DOCS_DIR",
+    help_dir_key="HELP_DIR",
+)
 
 # =============================================================================
 # CONFIGURATION
@@ -197,23 +203,14 @@ class HelloApp:
                 path = parsed.path
                 query = parse_qs(parsed.query)
 
+                # Let aide-frame handle docs/help routes (pass full path with query)
+                if http_routes.handle_request(self, self.path, ROUTES_CONFIG):
+                    return
+
                 if path == '/' or path == '/index.html':
                     self.serve_index()
-                elif path == '/help' or path == '/help.html':
-                    self.serve_help()
                 elif path == '/status':
                     self.send_json({"ready": True, "api_configured": bool(app.config.get("btn_api_key"))})
-                elif path == '/static/base.css':
-                    self.serve_static('base.css', 'text/css')
-                elif path == '/api/help/structure':
-                    self.send_json(help_viewer.get_help_structure())
-                elif path.startswith('/api/help/'):
-                    filename = path[10:]  # Remove '/api/help/'
-                    content = help_viewer.load_help_file(filename)
-                    if content:
-                        self.send_text(content, 'text/markdown')
-                    else:
-                        self.send_json({"error": "Help file not found"}, 404)
                 else:
                     self.send_json({"error": "Not found"}, 404)
 
@@ -245,12 +242,6 @@ class HelloApp:
             def serve_index(self):
                 """Serve the main HTML page."""
                 static_path = os.path.join(SCRIPT_DIR, 'static', 'index.html')
-                with open(static_path, 'r') as f:
-                    self.send_html(f.read())
-
-            def serve_help(self):
-                """Serve the help page."""
-                static_path = os.path.join(SCRIPT_DIR, 'static', 'help.html')
                 with open(static_path, 'r') as f:
                     self.send_html(f.read())
 
