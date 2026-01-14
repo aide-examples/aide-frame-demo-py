@@ -27,6 +27,7 @@
             cursor: pointer;
             transition: all 0.2s;
             display: block;
+            text-decoration: none;
         }
         .demo-btn:hover {
             border-color: #2563eb;
@@ -146,7 +147,8 @@
             http_call: { title: 'HTTP API Call', desc: 'Fetch JSON from external APIs' },
             config: { title: 'Configuration', desc: 'Config loading and path management' },
             logging: { title: 'Logging', desc: 'Log levels and structured output' },
-            qrcode: { title: 'QR Code', desc: 'Generate QR codes from text' }
+            qrcode: { title: 'QR Code', desc: 'Generate QR codes from text' },
+            markdown: { title: 'Markdown', desc: 'Rendered markdown with Mermaid', link: '/about?doc=development/markdown-demo.md' }
         };
 
         let activeDemo = null;
@@ -154,12 +156,22 @@
         function initDemoGrid() {
             const grid = document.getElementById('demo-grid');
             for (const [key, demo] of Object.entries(DEMOS)) {
-                const btn = document.createElement('button');
-                btn.className = 'demo-btn';
-                btn.id = `btn-${key}`;
-                btn.innerHTML = `<h3>${demo.title}</h3><p>${demo.desc}</p>`;
-                btn.onclick = () => selectDemo(key);
-                grid.appendChild(btn);
+                if (demo.link) {
+                    // Link-based demo - navigate to page
+                    const a = document.createElement('a');
+                    a.className = 'demo-btn';
+                    a.href = demo.link;
+                    a.innerHTML = `<h3>${demo.title}</h3><p>${demo.desc}</p>`;
+                    grid.appendChild(a);
+                } else {
+                    // Panel-based demo
+                    const btn = document.createElement('button');
+                    btn.className = 'demo-btn';
+                    btn.id = `btn-${key}`;
+                    btn.innerHTML = `<h3>${demo.title}</h3><p>${demo.desc}</p>`;
+                    btn.onclick = () => selectDemo(key);
+                    grid.appendChild(btn);
+                }
             }
         }
 
