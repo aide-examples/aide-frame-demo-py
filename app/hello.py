@@ -36,8 +36,8 @@ paths.init(SCRIPT_DIR)
 # =============================================================================
 
 from aide_frame import http_routes, http_server
-from aide_frame.log import logger, set_level
-from aide_frame.config import load_config
+from aide_frame.log import logger
+from aide_frame.args import add_common_args, apply_common_args
 from aide_frame.web_request import fetch_json
 
 # =============================================================================
@@ -157,21 +157,17 @@ def main():
 
     import argparse
     parser = argparse.ArgumentParser(description='Hello - Name Info Lookup')
-    parser.add_argument('--config', '-c', default='hello_config.json', help='Config file')
+    add_common_args(parser, config_default='hello_config.json')
     parser.add_argument('--port', '-p', type=int, help='Override port')
-    parser.add_argument('--log-level', '-l', default='INFO',
-                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'])
     args = parser.parse_args()
 
-    set_level(args.log_level)
-
-    config = load_config(
-        config_path=args.config,
-        search_paths=[
+    config = apply_common_args(
+        args,
+        config_search_paths=[
             os.path.join(PROJECT_DIR, 'hello_config.json'),
             os.path.join(SCRIPT_DIR, 'hello_config.json'),
         ],
-        defaults=DEFAULT_CONFIG
+        config_defaults=DEFAULT_CONFIG
     )
 
     if args.port:
