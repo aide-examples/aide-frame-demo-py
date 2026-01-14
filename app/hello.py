@@ -26,7 +26,7 @@ paths.init(SCRIPT_DIR)
 # 3. AIDE-FRAME IMPORTS
 # =============================================================================
 
-from aide_frame import http_routes, http_server
+from aide_frame import http_routes, http_server, update_routes
 from aide_frame.args import add_common_args, apply_common_args
 
 # =============================================================================
@@ -89,5 +89,9 @@ if __name__ == '__main__':
         handler_class=HelloHandler,
         app_dir=SCRIPT_DIR,
         docs_config=http_routes.DocsConfig(app_name="AIDE Demo"),
+        update_config=update_routes.UpdateConfig(
+            github_repo="aide-examples/aide-hello",
+            service_name="aide-hello"
+        ),
     )
     server.run()

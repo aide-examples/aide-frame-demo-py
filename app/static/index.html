@@ -126,8 +126,12 @@
             <button onclick="runLoggingDemo('log')" class="wide">Send Test Message</button>
             <div class="result-box" id="logging-result"></div>
         </div>
+
+        <!-- Status Widget -->
+        <div id="status-widget" style="margin-top: 20px;"></div>
     </div>
 
+    <script src="/static/frame/js/status-widget.js"></script>
     <script>
         const DEMOS = {
             http_call: { title: 'HTTP API Call', desc: 'Fetch JSON from external APIs' },
@@ -199,6 +203,7 @@
         }
 
         initDemoGrid();
+        StatusWidget.init('#status-widget', { showMemory: false });
     </script>
 </body>
 </html>
