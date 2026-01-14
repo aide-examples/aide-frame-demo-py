@@ -78,10 +78,10 @@ External link: [GitHub](https://github.com)
 
 ## Images
 
-![AIDE Logo](../assets/aide-logo.svg)
+![AIDE Logo](aide-logo.svg)
 
 ```markdown
-![AIDE Logo](../assets/aide-logo.svg)
+![AIDE Logo](aide-logo.svg)
 ```
 
 *Note: Place images in `docs/assets/` and use relative paths from your markdown file.*

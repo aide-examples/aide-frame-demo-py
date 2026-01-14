@@ -88,7 +88,17 @@ if __name__ == '__main__':
         port=config['port'],
         handler_class=HelloHandler,
         app_dir=SCRIPT_DIR,
-        docs_config=http_routes.DocsConfig(app_name="AIDE Demo"),
+        docs_config=http_routes.DocsConfig(
+            app_name="AIDE Demo",
+            custom_roots={
+                "sample_docs": http_routes.CustomRoot(
+                    dir_key="SAMPLE_DOCS_DIR",
+                    title="Sample Docs",
+                    route="/sample_docs",
+                    subdir="sample_docs",
+                )
+            }
+        ),
         update_config=update_routes.UpdateConfig(
             github_repo="aide-examples/aide-hello",
             service_name="aide-hello"
