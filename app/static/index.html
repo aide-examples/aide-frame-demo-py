@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello - Name Info</title>
+    <link rel="stylesheet" href="/static/base.css">
+    <style>
+        /* Page-specific: center the container vertically */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .result { display: none; }
+        .result.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container wide">
+        <div class="header">
+            <h1>Hello!</h1>
+            <div>
+                <a href="/help" class="header-link" title="Help">?</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-group">
+                <input type="text" id="name-input" placeholder="Enter a name..." autofocus>
+            </div>
+            <button onclick="lookup()" id="submit-btn" class="wide">What does it mean?</button>
+        </div>
+        <div class="card result" id="result">
+            <h3 id="result-name"></h3>
+            <div class="status-row">
+                <span class="status-label">Meaning</span>
+                <span class="status-value" id="result-meaning"></span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Origin</span>
+                <span class="status-value" id="result-origin"></span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Gender</span>
+                <span class="status-value" id="result-gender"></span>
+            </div>
+            <div class="details">Source: <code id="result-source"></code></div>
+        </div>
+    </div>
+    <script>
+        const input = document.getElementById('name-input');
+        const btn = document.getElementById('submit-btn');
+        const result = document.getElementById('result');
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') lookup();
+        });
+
+        async function lookup() {
+            const name = input.value.trim();
+            if (!name) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Looking up...';
+
+            try {
+                const res = await fetch('/etymology', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name})
+                });
+                const data = await res.json();
+
+                document.getElementById('result-name').textContent = data.name;
+                document.getElementById('result-meaning').textContent = data.meaning;
+                document.getElementById('result-origin').textContent = data.origin;
+                document.getElementById('result-gender').textContent = data.gender;
+                document.getElementById('result-source').textContent = data.source;
+                result.classList.add('show');
+            } catch (e) {
+                alert('Error: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'What does it mean?';
+            }
+        }
+    </script>
+</body>
+</html>

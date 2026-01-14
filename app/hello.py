@@ -2,14 +2,11 @@
 """
 Hello - A minimal aide-frame example application.
 
-Demonstrates how to use aide-frame for a simple web application that:
+Demonstrates how to use our set of technical components (*aide-frame*) for a simple web application that:
 - Serves a web UI
 - Accepts user input (name)
 - Makes an external API call (Behind The Name)
 - Returns a response
-
-This is a reference implementation showing aide-frame usage without
-any slideshow/video-specific code.
 """
 
 import os
@@ -42,9 +39,15 @@ if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
 from aide_frame import paths
 paths.init(SCRIPT_DIR)
 
+# Register help directory
+paths.register("HELP_DIR", os.path.join(paths.APP_DIR, "help"))
+
 from aide_frame.log import logger, set_level
 from aide_frame.config import load_config
 from aide_frame.web_request import fetch_json
+
+# Local imports
+import help_viewer
 
 # =============================================================================
 # CONFIGURATION
@@ -74,16 +77,15 @@ class EtymologyService:
         }
 
     def lookup(self, name):
-        """Look up etymology for a name."""
+        """Look up name info using free APIs."""
         name_lower = name.lower().strip()
 
-        # Try API if key is configured
-        if self.api_key:
-            result = self._lookup_api(name)
-            if result:
-                return result
+        # Try free APIs (no key required)
+        result = self._lookup_free_apis(name)
+        if result:
+            return result
 
-        # Fallback to demo data
+        # Fallback to demo data for etymology
         if name_lower in self.demo_data:
             data = self.demo_data[name_lower]
             return {
@@ -98,28 +100,35 @@ class EtymologyService:
         return {
             "name": name,
             "meaning": "Unknown",
-            "origin": "Could not find etymology for this name",
+            "origin": "Could not find info for this name",
             "gender": "unknown",
             "source": "none"
         }
 
-    def _lookup_api(self, name):
-        """Look up name via Behind The Name API."""
-        url = f"https://www.behindthename.com/api/lookup.json?name={name}&key={self.api_key}"
-
+    def _lookup_free_apis(self, name):
+        """Look up name using free Genderize and Agify APIs."""
         try:
-            data = fetch_json(url)
-            if data and isinstance(data, list) and len(data) > 0:
-                entry = data[0]
+            gender_data = fetch_json(f"https://api.genderize.io/?name={name}")
+            age_data = fetch_json(f"https://api.agify.io/?name={name}")
+
+            if gender_data and gender_data.get("gender"):
+                gender = gender_data.get("gender", "unknown")
+                probability = gender_data.get("probability", 0)
+                age = age_data.get("age") if age_data else None
+
+                meaning = f"Predicted {gender} ({probability*100:.0f}% confidence)"
+                if age:
+                    meaning += f", average age {age}"
+
                 return {
-                    "name": entry.get("name", name),
-                    "meaning": entry.get("info", {}).get("meaning", "Unknown"),
-                    "origin": ", ".join([u.get("usage", "") for u in entry.get("usages", [])]),
-                    "gender": entry.get("gender", "unknown"),
-                    "source": "behindthename.com"
+                    "name": name,
+                    "meaning": meaning,
+                    "origin": f"Based on {gender_data.get('count', 0):,} records",
+                    "gender": gender,
+                    "source": "genderize.io + agify.io"
                 }
         except Exception as e:
-            logger.error(f"API error: {e}")
+            logger.error(f"Free API error: {e}")
 
         return None
 
@@ -171,14 +180,40 @@ class HelloApp:
                 self.end_headers()
                 self.wfile.write(html.encode())
 
+            def send_text(self, text, content_type='text/plain'):
+                self.send_response(200)
+                self.send_header('Content-Type', f'{content_type}; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(text.encode())
+
+            def send_css(self, css):
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/css; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(css.encode())
+
             def do_GET(self):
                 parsed = urlparse(self.path)
                 path = parsed.path
+                query = parse_qs(parsed.query)
 
                 if path == '/' or path == '/index.html':
                     self.serve_index()
+                elif path == '/help' or path == '/help.html':
+                    self.serve_help()
                 elif path == '/status':
                     self.send_json({"ready": True, "api_configured": bool(app.config.get("btn_api_key"))})
+                elif path == '/static/base.css':
+                    self.serve_static('base.css', 'text/css')
+                elif path == '/api/help/structure':
+                    self.send_json(help_viewer.get_help_structure())
+                elif path.startswith('/api/help/'):
+                    filename = path[10:]  # Remove '/api/help/'
+                    content = help_viewer.load_help_file(filename)
+                    if content:
+                        self.send_text(content, 'text/markdown')
+                    else:
+                        self.send_json({"error": "Help file not found"}, 404)
                 else:
                     self.send_json({"error": "Not found"}, 404)
 
@@ -210,114 +245,25 @@ class HelloApp:
             def serve_index(self):
                 """Serve the main HTML page."""
                 static_path = os.path.join(SCRIPT_DIR, 'static', 'index.html')
-                if os.path.exists(static_path):
+                with open(static_path, 'r') as f:
+                    self.send_html(f.read())
+
+            def serve_help(self):
+                """Serve the help page."""
+                static_path = os.path.join(SCRIPT_DIR, 'static', 'help.html')
+                with open(static_path, 'r') as f:
+                    self.send_html(f.read())
+
+            def serve_static(self, filename, content_type):
+                """Serve a static file."""
+                static_path = os.path.join(SCRIPT_DIR, 'static', filename)
+                try:
                     with open(static_path, 'r') as f:
-                        self.send_html(f.read())
-                else:
-                    self.send_html(EMBEDDED_HTML)
+                        self.send_text(f.read(), content_type)
+                except FileNotFoundError:
+                    self.send_json({"error": "File not found"}, 404)
 
         return Handler
-
-# =============================================================================
-# EMBEDDED HTML (fallback if static/index.html doesn't exist)
-# =============================================================================
-
-EMBEDDED_HTML = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello - Name Etymology</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e; color: #eee; min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .container { max-width: 500px; width: 90%; padding: 2rem; }
-        h1 { text-align: center; margin-bottom: 2rem; color: #60a5fa; }
-        .card {
-            background: #16213e; border-radius: 12px; padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        input[type="text"] {
-            width: 100%; padding: 12px; border: none; border-radius: 8px;
-            background: #0f3460; color: #fff; font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-        input[type="text"]::placeholder { color: #888; }
-        button {
-            width: 100%; padding: 12px; border: none; border-radius: 8px;
-            background: #60a5fa; color: #000; font-size: 1rem;
-            font-weight: 600; cursor: pointer; transition: background 0.2s;
-        }
-        button:hover { background: #93c5fd; }
-        button:disabled { background: #444; cursor: not-allowed; }
-        .result { display: none; }
-        .result.show { display: block; }
-        .result h2 { color: #60a5fa; margin-bottom: 0.5rem; }
-        .result p { margin: 0.5rem 0; color: #ccc; }
-        .result .label { color: #888; font-size: 0.9rem; }
-        .source { font-size: 0.8rem; color: #666; margin-top: 1rem; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Hello!</h1>
-        <div class="card">
-            <input type="text" id="name-input" placeholder="Enter a name..." autofocus>
-            <button onclick="lookup()" id="submit-btn">What does it mean?</button>
-        </div>
-        <div class="card result" id="result">
-            <h2 id="result-name"></h2>
-            <p><span class="label">Meaning:</span> <span id="result-meaning"></span></p>
-            <p><span class="label">Origin:</span> <span id="result-origin"></span></p>
-            <p><span class="label">Gender:</span> <span id="result-gender"></span></p>
-            <p class="source">Source: <span id="result-source"></span></p>
-        </div>
-    </div>
-    <script>
-        const input = document.getElementById('name-input');
-        const btn = document.getElementById('submit-btn');
-        const result = document.getElementById('result');
-
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') lookup();
-        });
-
-        async function lookup() {
-            const name = input.value.trim();
-            if (!name) return;
-
-            btn.disabled = true;
-            btn.textContent = 'Looking up...';
-
-            try {
-                const res = await fetch('/etymology', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name})
-                });
-                const data = await res.json();
-
-                document.getElementById('result-name').textContent = data.name;
-                document.getElementById('result-meaning').textContent = data.meaning;
-                document.getElementById('result-origin').textContent = data.origin;
-                document.getElementById('result-gender').textContent = data.gender;
-                document.getElementById('result-source').textContent = data.source;
-                result.classList.add('show');
-            } catch (e) {
-                alert('Error: ' + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'What does it mean?';
-            }
-        }
-    </script>
-</body>
-</html>
-"""
 
 # =============================================================================
 # MAIN
