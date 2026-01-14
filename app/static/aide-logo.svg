@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <rect width="200" height="60" fill="#1a1a2e"/>
+  <text x="100" y="38" font-family="monospace" font-size="24" font-weight="bold" fill="#4da6ff" text-anchor="middle">AIDE</text>
+  <text x="100" y="52" font-family="monospace" font-size="10" fill="#888" text-anchor="middle">Framework</text>
+</svg>
