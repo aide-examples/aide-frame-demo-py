@@ -3,88 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello - Name Info</title>
+    <title>AIDE Frame Demo</title>
     <link rel="stylesheet" href="/static/frame/css/base.css">
     <style>
-        /* Page-specific: center the container vertically */
         body {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding-top: 40px;
         }
-        .result { display: none; }
-        .result.show { display: block; }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .demo-btn {
+            padding: 20px;
+            text-align: left;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .demo-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+        .demo-btn.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+        .demo-btn h3 {
+            margin: 0 0 8px 0;
+            color: var(--accent);
+        }
+        .demo-btn p {
+            margin: 0;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        .demo-panel {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+        .demo-panel.active { display: block; }
+        .demo-panel h2 { margin-top: 0; }
+        .result-box {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .result-box.show { display: block; }
+        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
     </style>
 </head>
 <body>
-    <div class="container wide">
+    <div class="container">
         <div class="header">
-            <h1>Hello!</h1>
+            <h1>AIDE Frame Demo</h1>
             <div>
-                <a href="/about" class="header-link" title="About">About</a>
+                <a href="/about" class="header-link" title="Documentation">Docs</a>
                 <a href="/help" class="header-link" title="Help">?</a>
             </div>
         </div>
-        <div class="card">
+
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+            Interactive demonstrations of aide-frame features. Select a demo below.
+        </p>
+
+        <div class="demo-grid" id="demo-grid"></div>
+
+        <!-- HTTP Call Demo -->
+        <div class="demo-panel" id="panel-http_call">
+            <h2>HTTP API Call</h2>
+            <p>Fetch gender prediction from Genderize.io API.</p>
             <div class="form-group">
-                <input type="text" id="name-input" placeholder="Enter a name..." autofocus>
+                <input type="text" id="http-name" placeholder="Enter a name (e.g., Max, Anna)">
             </div>
-            <button onclick="lookup()" id="submit-btn" class="wide">What does it mean?</button>
+            <button onclick="runHttpDemo()" class="wide">Lookup Name</button>
+            <div class="result-box" id="http-result"></div>
         </div>
-        <div class="card result" id="result">
-            <h3 id="result-name"></h3>
-            <div class="status-row">
-                <span class="status-label">Meaning</span>
-                <span class="status-value" id="result-meaning"></span>
+
+        <!-- Config Demo -->
+        <div class="demo-panel" id="panel-config">
+            <h2>Configuration</h2>
+            <p>Explore config loading and path management.</p>
+            <div class="action-btns">
+                <button onclick="runConfigDemo('show_paths')">Show Paths</button>
+                <button onclick="runConfigDemo('load_config')">Load Config</button>
             </div>
-            <div class="status-row">
-                <span class="status-label">Origin</span>
-                <span class="status-value" id="result-origin"></span>
+            <div class="result-box" id="config-result"></div>
+        </div>
+
+        <!-- Logging Demo -->
+        <div class="demo-panel" id="panel-logging">
+            <h2>Logging</h2>
+            <p>Test different log levels. Check terminal for output.</p>
+            <div class="action-btns">
+                <button onclick="runLoggingDemo('status')">Status</button>
+                <button onclick="runLoggingDemo('log', 'DEBUG')">Log DEBUG</button>
+                <button onclick="runLoggingDemo('log', 'INFO')">Log INFO</button>
+                <button onclick="runLoggingDemo('log', 'WARNING')">Log WARNING</button>
+                <button onclick="runLoggingDemo('log', 'ERROR')">Log ERROR</button>
             </div>
-            <div class="status-row">
-                <span class="status-label">Gender</span>
-                <span class="status-value" id="result-gender"></span>
+            <div class="form-group" style="margin-top: 16px;">
+                <select id="log-level">
+                    <option value="DEBUG">DEBUG</option>
+                    <option value="INFO" selected>INFO</option>
+                    <option value="WARNING">WARNING</option>
+                    <option value="ERROR">ERROR</option>
+                </select>
+                <button onclick="runLoggingDemo('set_level')" style="margin-left: 8px;">Set Level</button>
             </div>
-            <div class="details">Source: <code id="result-source"></code></div>
+            <div class="result-box" id="logging-result"></div>
         </div>
     </div>
+
     <script>
-        const input = document.getElementById('name-input');
-        const btn = document.getElementById('submit-btn');
-        const result = document.getElementById('result');
+        const DEMOS = {
+            http_call: { title: 'HTTP API Call', desc: 'Fetch JSON from external APIs' },
+            config: { title: 'Configuration', desc: 'Config loading and path management' },
+            logging: { title: 'Logging', desc: 'Log levels and structured output' }
+        };
 
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') lookup();
-        });
+        let activeDemo = null;
 
-        async function lookup() {
-            const name = input.value.trim();
-            if (!name) return;
-
-            btn.disabled = true;
-            btn.textContent = 'Looking up...';
-
-            try {
-                const res = await fetch('/etymology', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name})
-                });
-                const data = await res.json();
-
-                document.getElementById('result-name').textContent = data.name;
-                document.getElementById('result-meaning').textContent = data.meaning;
-                document.getElementById('result-origin').textContent = data.origin;
-                document.getElementById('result-gender').textContent = data.gender;
-                document.getElementById('result-source').textContent = data.source;
-                result.classList.add('show');
-            } catch (e) {
-                alert('Error: ' + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'What does it mean?';
+        function initDemoGrid() {
+            const grid = document.getElementById('demo-grid');
+            for (const [key, demo] of Object.entries(DEMOS)) {
+                const btn = document.createElement('button');
+                btn.className = 'demo-btn';
+                btn.id = `btn-${key}`;
+                btn.innerHTML = `<h3>${demo.title}</h3><p>${demo.desc}</p>`;
+                btn.onclick = () => selectDemo(key);
+                grid.appendChild(btn);
             }
         }
+
+        function selectDemo(key) {
+            // Update buttons
+            document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${key}`).classList.add('active');
+
+            // Update panels
+            document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`panel-${key}`).classList.add('active');
+
+            activeDemo = key;
+        }
+
+        async function callDemo(demoName, data) {
+            const res = await fetch(`/api/demo/${demoName}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return res.json();
+        }
+
+        function showResult(elementId, data) {
+            const el = document.getElementById(elementId);
+            el.textContent = JSON.stringify(data, null, 2);
+            el.classList.add('show');
+        }
+
+        async function runHttpDemo() {
+            const name = document.getElementById('http-name').value.trim();
+            if (!name) { alert('Please enter a name'); return; }
+            const result = await callDemo('http_call', { name });
+            showResult('http-result', result);
+        }
+
+        async function runConfigDemo(action) {
+            const result = await callDemo('config', { action });
+            showResult('config-result', result);
+        }
+
+        async function runLoggingDemo(action, level) {
+            const data = { action };
+            if (action === 'set_level') {
+                data.level = document.getElementById('log-level').value;
+            } else if (level) {
+                data.level = level;
+                data.message = `Test ${level} message from demo UI`;
+            }
+            const result = await callDemo('logging', data);
+            showResult('logging-result', result);
+        }
+
+        initDemoGrid();
     </script>
 </body>
 </html>
