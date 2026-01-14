@@ -13,7 +13,7 @@ import os
 import sys
 
 # =============================================================================
-# PATH SETUP
+# 1. PATH SETUP - Must be done before importing aide-frame
 # =============================================================================
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,16 +25,20 @@ if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
     sys.path.insert(0, AIDE_FRAME_PATH)
 
 # =============================================================================
-# AIDE-FRAME IMPORTS
+# 2. AIDE-FRAME INIT - paths.init() MUST come before other aide-frame imports
 # =============================================================================
 
-from aide_frame import paths, http_routes, http_server
+from aide_frame import paths
+paths.init(SCRIPT_DIR)
+
+# =============================================================================
+# 3. AIDE-FRAME IMPORTS - Safe now that paths is initialized
+# =============================================================================
+
+from aide_frame import http_routes, http_server
 from aide_frame.log import logger, set_level
 from aide_frame.config import load_config
 from aide_frame.web_request import fetch_json
-
-# Initialize paths early so DocsConfig can auto-register docs/help directories
-paths.init(SCRIPT_DIR)
 
 # =============================================================================
 # CONFIGURATION
