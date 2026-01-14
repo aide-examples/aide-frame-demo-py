@@ -2,19 +2,15 @@
 """
 Hello - A minimal aide-frame example application.
 
-Demonstrates how to use our set of technical components (*aide-frame*) for a simple web application that:
+Demonstrates how to use aide-frame for a simple web application that:
 - Serves a web UI
 - Accepts user input (name)
-- Makes an external API call (Behind The Name)
+- Makes an external API call (Genderize/Agify)
 - Returns a response
 """
 
 import os
 import sys
-import json
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
 
 # =============================================================================
 # PATH SETUP
@@ -23,11 +19,7 @@ from urllib.parse import urlparse, parse_qs
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
 
-# Add app directory to Python path
-if SCRIPT_DIR not in sys.path:
-    sys.path.insert(0, SCRIPT_DIR)
-
-# Add aide-frame to Python path (submodule or embedded)
+# Add aide-frame to Python path (submodule)
 AIDE_FRAME_PATH = os.path.join(PROJECT_DIR, 'aide-frame', 'python')
 if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
     sys.path.insert(0, AIDE_FRAME_PATH)
@@ -36,24 +28,10 @@ if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
 # AIDE-FRAME IMPORTS
 # =============================================================================
 
-from aide_frame import paths, http_routes
-paths.init(SCRIPT_DIR)
-
-# DOCS_DIR and HELP_DIR are auto-registered by DocsConfig if they exist in APP_DIR
-
+from aide_frame import http_routes, http_server
 from aide_frame.log import logger, set_level
 from aide_frame.config import load_config
 from aide_frame.web_request import fetch_json
-
-# HTTP routes configuration for docs and help
-# section_defs not needed - auto-discovered from docs/ directory structure
-ROUTES_CONFIG = http_routes.DocsConfig(
-    app_name="Hello",
-    back_link="/",
-    back_text="Home",
-    docs_dir_key="DOCS_DIR",
-    help_dir_key="HELP_DIR",
-)
 
 # =============================================================================
 # CONFIGURATION
@@ -61,28 +39,25 @@ ROUTES_CONFIG = http_routes.DocsConfig(
 
 DEFAULT_CONFIG = {
     "port": 8082,
-    "btn_api_key": "",  # Behind The Name API key (optional)
 }
 
 # =============================================================================
-# NAME ETYMOLOGY SERVICE
+# NAME INFO SERVICE
 # =============================================================================
 
-class EtymologyService:
-    """Service for looking up name etymologies."""
+class NameInfoService:
+    """Service for looking up name info using free APIs."""
 
-    def __init__(self, api_key=None):
-        self.api_key = api_key
-        self.demo_data = {
-            "max": {"meaning": "Greatest", "origin": "Latin (Maximus)", "gender": "masculine"},
-            "anna": {"meaning": "Grace, favor", "origin": "Hebrew (Hannah)", "gender": "feminine"},
-            "paul": {"meaning": "Small, humble", "origin": "Latin (Paulus)", "gender": "masculine"},
-            "maria": {"meaning": "Beloved, sea of bitterness", "origin": "Hebrew (Miriam)", "gender": "feminine"},
-            "peter": {"meaning": "Rock, stone", "origin": "Greek (Petros)", "gender": "masculine"},
-            "sarah": {"meaning": "Princess", "origin": "Hebrew", "gender": "feminine"},
-        }
+    DEMO_DATA = {
+        "max": {"meaning": "Greatest", "origin": "Latin (Maximus)", "gender": "masculine"},
+        "anna": {"meaning": "Grace, favor", "origin": "Hebrew (Hannah)", "gender": "feminine"},
+        "paul": {"meaning": "Small, humble", "origin": "Latin (Paulus)", "gender": "masculine"},
+        "maria": {"meaning": "Beloved, sea of bitterness", "origin": "Hebrew (Miriam)", "gender": "feminine"},
+        "peter": {"meaning": "Rock, stone", "origin": "Greek (Petros)", "gender": "masculine"},
+        "sarah": {"meaning": "Princess", "origin": "Hebrew", "gender": "feminine"},
+    }
 
-    def lookup(self, name):
+    def lookup(self, name: str) -> dict:
         """Look up name info using free APIs."""
         name_lower = name.lower().strip()
 
@@ -91,9 +66,9 @@ class EtymologyService:
         if result:
             return result
 
-        # Fallback to demo data for etymology
-        if name_lower in self.demo_data:
-            data = self.demo_data[name_lower]
+        # Fallback to demo data
+        if name_lower in self.DEMO_DATA:
+            data = self.DEMO_DATA[name_lower]
             return {
                 "name": name,
                 "meaning": data["meaning"],
@@ -111,7 +86,7 @@ class EtymologyService:
             "source": "none"
         }
 
-    def _lookup_free_apis(self, name):
+    def _lookup_free_apis(self, name: str) -> dict | None:
         """Look up name using free Genderize and Agify APIs."""
         try:
             gender_data = fetch_json(f"https://api.genderize.io/?name={name}")
@@ -138,145 +113,51 @@ class EtymologyService:
 
         return None
 
+
 # =============================================================================
-# HTTP SERVER
+# HTTP HANDLER
 # =============================================================================
 
-class HelloApp:
-    """Main application class."""
+# Global service instance (set in main)
+name_service: NameInfoService = None
 
-    def __init__(self, config):
-        self.config = config
-        self.port = config.get("port", 8082)
-        self.etymology = EtymologyService(config.get("btn_api_key"))
-        self._server = None
-        self._thread = None
 
-    def start(self):
-        """Start the HTTP server."""
-        handler = self._create_handler()
-        self._server = HTTPServer(('0.0.0.0', self.port), handler)
-        self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
-        self._thread.start()
-        logger.info(f"Hello server started on http://localhost:{self.port}")
+class HelloHandler(http_server.JsonHandler):
+    """HTTP handler for Hello app."""
 
-    def stop(self):
-        """Stop the HTTP server."""
-        if self._server:
-            self._server.shutdown()
+    def get(self, path, params):
+        if path == '/' or path == '/index.html':
+            return self.file('index.html')
+        if path == '/status':
+            return {"ready": True}
+        return {"error": "Not found"}, 404
 
-    def _create_handler(self):
-        """Create HTTP request handler."""
-        app = self
+    def post(self, path, data):
+        if path == '/etymology':
+            name = data.get('name', '').strip()
+            if not name:
+                return {"error": "Name is required"}, 400
+            return name_service.lookup(name)
+        return {"error": "Not found"}, 404
 
-        class Handler(BaseHTTPRequestHandler):
-            def log_message(self, format, *args):
-                logger.debug(f"HTTP: {args[0]}")
-
-            def send_json(self, data, status=200):
-                self.send_response(status)
-                self.send_header('Content-Type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps(data).encode())
-
-            def send_html(self, html):
-                self.send_response(200)
-                self.send_header('Content-Type', 'text/html; charset=utf-8')
-                self.end_headers()
-                self.wfile.write(html.encode())
-
-            def send_text(self, text, content_type='text/plain'):
-                self.send_response(200)
-                self.send_header('Content-Type', f'{content_type}; charset=utf-8')
-                self.end_headers()
-                self.wfile.write(text.encode())
-
-            def send_css(self, css):
-                self.send_response(200)
-                self.send_header('Content-Type', 'text/css; charset=utf-8')
-                self.end_headers()
-                self.wfile.write(css.encode())
-
-            def do_GET(self):
-                parsed = urlparse(self.path)
-                path = parsed.path
-                query = parse_qs(parsed.query)
-
-                # Let aide-frame handle docs/help routes (pass full path with query)
-                if http_routes.handle_request(self, self.path, ROUTES_CONFIG):
-                    return
-
-                if path == '/' or path == '/index.html':
-                    self.serve_index()
-                elif path == '/status':
-                    self.send_json({"ready": True, "api_configured": bool(app.config.get("btn_api_key"))})
-                else:
-                    self.send_json({"error": "Not found"}, 404)
-
-            def do_POST(self):
-                parsed = urlparse(self.path)
-                path = parsed.path
-
-                # Read POST body
-                content_length = int(self.headers.get('Content-Length', 0))
-                body = self.rfile.read(content_length).decode('utf-8') if content_length > 0 else '{}'
-
-                try:
-                    data = json.loads(body) if body else {}
-                except json.JSONDecodeError:
-                    self.send_json({"error": "Invalid JSON"}, 400)
-                    return
-
-                if path == '/etymology':
-                    name = data.get('name', '').strip()
-                    if not name:
-                        self.send_json({"error": "Name is required"}, 400)
-                        return
-
-                    result = app.etymology.lookup(name)
-                    self.send_json(result)
-                else:
-                    self.send_json({"error": "Not found"}, 404)
-
-            def serve_index(self):
-                """Serve the main HTML page."""
-                static_path = os.path.join(SCRIPT_DIR, 'static', 'index.html')
-                with open(static_path, 'r') as f:
-                    self.send_html(f.read())
-
-            def serve_static(self, filename, content_type):
-                """Serve a static file."""
-                static_path = os.path.join(SCRIPT_DIR, 'static', filename)
-                try:
-                    with open(static_path, 'r') as f:
-                        self.send_text(f.read(), content_type)
-                except FileNotFoundError:
-                    self.send_json({"error": "File not found"}, 404)
-
-        return Handler
 
 # =============================================================================
 # MAIN
 # =============================================================================
 
 def main():
-    import argparse
+    global name_service
 
-    parser = argparse.ArgumentParser(description='Hello - Name Etymology Lookup')
-    parser.add_argument('--config', '-c', default='hello_config.json',
-                        help='Path to config file')
-    parser.add_argument('--port', '-p', type=int,
-                        help='Override port')
+    import argparse
+    parser = argparse.ArgumentParser(description='Hello - Name Info Lookup')
+    parser.add_argument('--config', '-c', default='hello_config.json', help='Config file')
+    parser.add_argument('--port', '-p', type=int, help='Override port')
     parser.add_argument('--log-level', '-l', default='INFO',
-                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
-                        help='Log level')
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'])
     args = parser.parse_args()
 
-    # Set log level
     set_level(args.log_level)
 
-    # Load config
     config = load_config(
         config_path=args.config,
         search_paths=[
@@ -286,23 +167,28 @@ def main():
         defaults=DEFAULT_CONFIG
     )
 
-    # Override port if specified
     if args.port:
         config['port'] = args.port
 
-    # Start app
-    app = HelloApp(config)
-    app.start()
+    # Initialize service
+    name_service = NameInfoService()
 
-    logger.info("Press Ctrl+C to stop")
+    # Configure docs/help routes
+    docs_config = http_routes.DocsConfig(
+        app_name="Hello",
+        back_link="/",
+        back_text="Home",
+    )
 
-    try:
-        while True:
-            import time
-            time.sleep(1)
-    except KeyboardInterrupt:
-        logger.info("Shutting down...")
-        app.stop()
+    # Start server
+    server = http_server.HttpServer(
+        port=config['port'],
+        handler_class=HelloHandler,
+        app_dir=SCRIPT_DIR,
+        docs_config=docs_config,
+    )
+    server.run()
+
 
 if __name__ == '__main__':
     main()
