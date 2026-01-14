@@ -28,10 +28,13 @@ if os.path.isdir(AIDE_FRAME_PATH) and AIDE_FRAME_PATH not in sys.path:
 # AIDE-FRAME IMPORTS
 # =============================================================================
 
-from aide_frame import http_routes, http_server
+from aide_frame import paths, http_routes, http_server
 from aide_frame.log import logger, set_level
 from aide_frame.config import load_config
 from aide_frame.web_request import fetch_json
+
+# Initialize paths early so DocsConfig can auto-register docs/help directories
+paths.init(SCRIPT_DIR)
 
 # =============================================================================
 # CONFIGURATION
