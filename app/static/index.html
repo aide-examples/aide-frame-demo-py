@@ -121,6 +121,19 @@
             <div class="result-box" id="logging-result"></div>
         </div>
 
+        <!-- QR Code Demo -->
+        <div class="demo-panel" id="panel-qrcode">
+            <h2>QR Code</h2>
+            <p>Generate a QR code from text or URL.</p>
+            <div class="form-group">
+                <input type="text" id="qr-text" placeholder="Enter text or URL">
+            </div>
+            <button onclick="runQrDemo()" class="wide">Generate QR Code</button>
+            <div id="qr-result" style="display: none; margin-top: 16px; text-align: center;">
+                <img id="qr-image" style="max-width: 200px; image-rendering: pixelated;">
+            </div>
+        </div>
+
         <!-- Status Widget -->
         <div id="status-widget" style="margin-top: 20px;"></div>
     </div>
@@ -131,7 +144,8 @@
         const DEMOS = {
             http_call: { title: 'HTTP API Call', desc: 'Fetch JSON from external APIs' },
             config: { title: 'Configuration', desc: 'Config loading and path management' },
-            logging: { title: 'Logging', desc: 'Log levels and structured output' }
+            logging: { title: 'Logging', desc: 'Log levels and structured output' },
+            qrcode: { title: 'QR Code', desc: 'Generate QR codes from text' }
         };
 
         let activeDemo = null;
@@ -195,6 +209,18 @@
             }
             const result = await callDemo('logging', data);
             showResult('logging-result', result);
+        }
+
+        async function runQrDemo() {
+            const text = document.getElementById('qr-text').value.trim();
+            if (!text) { alert('Please enter text or URL'); return; }
+            const result = await callDemo('qrcode', { text });
+            if (result.image) {
+                document.getElementById('qr-image').src = result.image;
+                document.getElementById('qr-result').style.display = 'block';
+            } else if (result.error) {
+                alert(result.error);
+            }
         }
 
         initDemoGrid();
