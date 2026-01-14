@@ -74,13 +74,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>AIDE Frame Demo</h1>
-            <div>
-                <a href="/about" class="header-link" title="Documentation">Docs</a>
-                <a href="/help" class="header-link" title="Help">?</a>
-            </div>
-        </div>
+        <div id="app-header"></div>
 
         <p style="color: var(--text-secondary); margin-bottom: 24px;">
             Interactive demonstrations of aide-frame features. Select a demo below.
@@ -131,6 +125,7 @@
         <div id="status-widget" style="margin-top: 20px;"></div>
     </div>
 
+    <script src="/static/frame/js/header-widget.js"></script>
     <script src="/static/frame/js/status-widget.js"></script>
     <script>
         const DEMOS = {
@@ -203,6 +198,7 @@
         }
 
         initDemoGrid();
+        HeaderWidget.init('#app-header', { appName: 'AIDE Frame Demo' });
         StatusWidget.init('#status-widget');
     </script>
 </body>
