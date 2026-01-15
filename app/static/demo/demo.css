@@ -158,29 +158,32 @@
 .flag-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: #fff;
-    border: 2px solid #e0e0e0;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    color: #333;
 }
 
 .flag-btn:hover {
     border-color: #2563eb;
-    background: #f9fafb;
+    background: #fff;
 }
 
 .flag-btn.active {
     border-color: #2563eb;
-    background: #eff6ff;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    background: #fff;
+    color: #2563eb;
+    font-weight: 500;
 }
 
 .flag-icon {
-    font-size: 1.5rem;
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
 /* Mobile: Stack layout */

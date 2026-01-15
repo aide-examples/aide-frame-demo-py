@@ -79,11 +79,21 @@
                     <p id="i18n-current" style="margin: 16px 0; font-size: 0.9em; color: #666;"></p>
                     <div class="flag-buttons">
                         <button onclick="switchLanguage('en')" class="flag-btn" title="English">
-                            <span class="flag-icon">🇬🇧</span>
+                            <svg class="flag-icon" viewBox="0 0 60 30" width="24" height="12">
+                                <rect width="60" height="30" fill="#012169"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/>
+                                <path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/>
+                                <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/>
+                            </svg>
                             <span>English</span>
                         </button>
                         <button onclick="switchLanguage('de')" class="flag-btn" title="Deutsch">
-                            <span class="flag-icon">🇩🇪</span>
+                            <svg class="flag-icon" viewBox="0 0 5 3" width="24" height="14">
+                                <rect width="5" height="1" y="0" fill="#000"/>
+                                <rect width="5" height="1" y="1" fill="#D00"/>
+                                <rect width="5" height="1" y="2" fill="#FFCE00"/>
+                            </svg>
                             <span>Deutsch</span>
                         </button>
                     </div>
