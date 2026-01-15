@@ -23,14 +23,14 @@ function initDemoGrid() {
         if (cfg.link) {
             // Link-based demo - navigate to page
             const a = document.createElement('a');
-            a.className = 'demo-btn';
+            a.className = 'demo-btn notranslate';
             a.href = cfg.link;
             a.innerHTML = `<h3>${title}</h3><p>${desc}</p>`;
             grid.appendChild(a);
         } else {
             // Panel-based demo
             const btn = document.createElement('button');
-            btn.className = 'demo-btn';
+            btn.className = 'demo-btn notranslate';
             btn.id = `btn-${key}`;
             btn.innerHTML = `<h3>${title}</h3><p>${desc}</p>`;
             btn.onclick = () => selectDemo(key);
@@ -111,6 +111,7 @@ function updateI18nPanel() {
     const currentEl = document.getElementById('i18n-current');
     if (currentEl) {
         currentEl.textContent = i18n.t('i18n_current', { lang: i18n.lang.toUpperCase() });
+        currentEl.classList.add('notranslate');
     }
     // Highlight active flag button
     document.querySelectorAll('.flag-btn').forEach(btn => {
@@ -122,7 +123,9 @@ function updateI18nPanel() {
 (async () => {
     await i18n.init();
     document.title = i18n.t('app_title');
-    document.getElementById('app-subtitle').textContent = i18n.t('app_subtitle');
+    const subtitle = document.getElementById('app-subtitle');
+    subtitle.textContent = i18n.t('app_subtitle');
+    subtitle.classList.add('notranslate');
     i18n.applyToDOM();
     initDemoGrid();
     updateI18nPanel();
