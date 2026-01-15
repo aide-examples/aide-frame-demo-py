@@ -126,6 +126,6 @@ function updateI18nPanel() {
     i18n.applyToDOM();
     initDemoGrid();
     updateI18nPanel();
-    HeaderWidget.init('#app-header', { appName: i18n.t('app_title') });
+    HeaderWidget.init('#app-header', { appName: i18n.t('app_title'), showGoogleTranslate: true });
     StatusWidget.init('#status-widget');
 })();
