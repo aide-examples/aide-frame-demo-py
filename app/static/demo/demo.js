@@ -114,8 +114,9 @@ function updateI18nPanel() {
         currentEl.classList.add('notranslate');
     }
     // Highlight active flag button
+    const langMap = { en: 'english', de: 'deutsch', es: 'español' };
     document.querySelectorAll('.flag-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.title.toLowerCase().startsWith(i18n.lang === 'en' ? 'english' : 'deutsch'));
+        btn.classList.toggle('active', btn.title.toLowerCase() === langMap[i18n.lang]);
     });
 }
 
