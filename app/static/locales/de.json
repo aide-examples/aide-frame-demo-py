@@ -9,6 +9,8 @@
     "demo_logging_desc": "Log-Level und strukturierte Ausgabe",
     "demo_qrcode": "QR-Code",
     "demo_qrcode_desc": "QR-Codes aus Text generieren",
+    "demo_i18n": "Internationalisierung",
+    "demo_i18n_desc": "Mehrsprachige UI-Unterstützung",
     "demo_markdown": "Markdown",
     "demo_markdown_desc": "Gerendertes Markdown mit Mermaid",
     "http_title": "HTTP API-Aufruf",
@@ -29,5 +31,9 @@
     "qr_placeholder": "Text oder URL eingeben",
     "qr_button": "QR-Code generieren",
     "please_enter_name": "Bitte einen Namen eingeben",
-    "please_enter_text": "Bitte Text oder URL eingeben"
+    "please_enter_text": "Bitte Text oder URL eingeben",
+    "i18n_title": "Internationalisierung",
+    "i18n_desc": "Wechsle die UI-Sprache mit den Flaggen-Buttons unten.",
+    "i18n_current": "Aktuelle Sprache: %{lang}",
+    "select_demo": "Wähle eine Demo aus der Liste"
 }

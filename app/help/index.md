@@ -1,32 +1,42 @@
-# Hello - User Guide
+# AIDE Frame Demo - Help
 
-Welcome to Hello, a simple name information lookup tool.
+An interactive demo showcasing the features of the aide-frame framework.
 
-## Getting Started
+## Available Demos
 
-1. Enter a name in the text field
-2. Click "What does it mean?" or press Enter
-3. View the results showing meaning, origin, and gender prediction
+| Demo | Description |
+|------|-------------|
+| **HTTP API** | External API calls using `aide_frame.web_request` |
+| **Config** | Configuration loading & path management |
+| **Logging** | Structured logging with adjustable log levels |
+| **QR Code** | Generate QR codes from text or URLs |
+| **i18n** | Switch between English and German |
+| **Markdown** | View rendered markdown with Mermaid diagrams |
 
-## Understanding Results
+## How to Use
 
-| Field | Description |
-|-------|-------------|
-| Meaning | Name meaning or gender prediction with confidence |
-| Origin | Historical origin or data source information |
-| Gender | Predicted gender (masculine/feminine/unknown) |
-| Source | API or database used for the lookup |
+1. Select a demo from the sidebar (or grid on mobile)
+2. Interact with the demo controls
+3. View results in the output area
 
-## Data Sources
+## Language Switching
 
-Hello uses multiple data sources:
+Change the UI language using:
+- The dropdown in the header
+- The flag buttons in the i18n demo
 
-- **genderize.io** - Gender prediction based on name statistics
-- **agify.io** - Average age prediction
-- **Demo data** - Built-in etymology for common names
+## Framework Modules
 
-## Tips
+This demo showcases these aide-frame modules:
 
-- Try common names like "Anna", "Max", or "Maria" for etymology info
-- Less common names will show statistical predictions
-- The confidence percentage indicates prediction reliability
+- `aide_frame.web_request` - HTTP client for external APIs
+- `aide_frame.config` - JSON configuration loading with defaults
+- `aide_frame.paths` - Path registration and management
+- `aide_frame.log` - Structured logging
+- `aide_frame.qrcode_utils` - QR code generation
+- `aide_frame.docs_viewer` - Markdown rendering with Mermaid
+
+## More Information
+
+- [Documentation](/docs) - Framework documentation
+- [Markdown Demo](/sample_docs?doc=markdown-demo.md) - Markdown features showcase

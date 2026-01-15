@@ -8,6 +8,7 @@ const DEMO_CONFIG = {
     config: { titleKey: 'demo_config', descKey: 'demo_config_desc' },
     logging: { titleKey: 'demo_logging', descKey: 'demo_logging_desc' },
     qrcode: { titleKey: 'demo_qrcode', descKey: 'demo_qrcode_desc' },
+    i18n: { titleKey: 'demo_i18n', descKey: 'demo_i18n_desc' },
     markdown: { titleKey: 'demo_markdown', descKey: 'demo_markdown_desc', link: '/sample_docs?doc=markdown-demo.md' }
 };
 
@@ -43,7 +44,10 @@ function selectDemo(key) {
     document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`btn-${key}`).classList.add('active');
 
-    // Update panels
+    // Hide placeholder, show selected panel
+    const placeholder = document.getElementById('demo-placeholder');
+    if (placeholder) placeholder.classList.add('hidden');
+
     document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
     document.getElementById(`panel-${key}`).classList.add('active');
 
@@ -99,6 +103,21 @@ async function runQrDemo() {
     }
 }
 
+function switchLanguage(lang) {
+    i18n.setLanguage(lang);
+}
+
+function updateI18nPanel() {
+    const currentEl = document.getElementById('i18n-current');
+    if (currentEl) {
+        currentEl.textContent = i18n.t('i18n_current', { lang: i18n.lang.toUpperCase() });
+    }
+    // Highlight active flag button
+    document.querySelectorAll('.flag-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.title.toLowerCase().startsWith(i18n.lang === 'en' ? 'english' : 'deutsch'));
+    });
+}
+
 // Initialize
 (async () => {
     await i18n.init();
@@ -106,6 +125,7 @@ async function runQrDemo() {
     document.getElementById('app-subtitle').textContent = i18n.t('app_subtitle');
     i18n.applyToDOM();
     initDemoGrid();
+    updateI18nPanel();
     HeaderWidget.init('#app-header', { appName: i18n.t('app_title') });
     StatusWidget.init('#status-widget');
 })();

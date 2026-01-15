@@ -9,6 +9,8 @@
     "demo_logging_desc": "Log levels and structured output",
     "demo_qrcode": "QR Code",
     "demo_qrcode_desc": "Generate QR codes from text",
+    "demo_i18n": "Internationalization",
+    "demo_i18n_desc": "Multi-language UI support",
     "demo_markdown": "Markdown",
     "demo_markdown_desc": "Rendered markdown with Mermaid",
     "http_title": "HTTP API Call",
@@ -29,5 +31,9 @@
     "qr_placeholder": "Enter text or URL",
     "qr_button": "Generate QR Code",
     "please_enter_name": "Please enter a name",
-    "please_enter_text": "Please enter text or URL"
+    "please_enter_text": "Please enter text or URL",
+    "i18n_title": "Internationalization",
+    "i18n_desc": "Switch the UI language using the flag buttons below.",
+    "i18n_current": "Current language: %{lang}",
+    "select_demo": "Select a demo from the list"
 }

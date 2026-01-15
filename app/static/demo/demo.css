@@ -1,27 +1,46 @@
 /**
- * Demo page styles
+ * Demo page styles - Responsive sidebar layout
  */
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 40px;
+/* App container */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.demo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+.app-subtitle {
+    color: #666;
     margin-bottom: 24px;
 }
 
+/* Desktop: Sidebar layout */
+.demo-layout {
+    display: flex;
+    gap: 24px;
+    min-height: 500px;
+}
+
+/* Sidebar */
+.demo-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+}
+
+/* Demo buttons in sidebar */
 .demo-btn {
-    padding: 20px;
+    padding: 16px;
     text-align: left;
     border: 1px solid #e0e0e0;
     background: #fff;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     display: block;
@@ -43,23 +62,32 @@ body {
 
 .demo-btn.active {
     border-color: #2563eb;
+    background: #eff6ff;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .demo-btn h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
+    font-size: 1rem;
     color: #2563eb;
 }
 
 .demo-btn p {
     margin: 0;
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #666;
 }
 
+/* Main content area */
+.demo-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Demo panels */
 .demo-panel {
     display: none;
-    padding: 20px;
+    padding: 24px;
     border: 1px solid #e0e0e0;
     background: #fff;
     border-radius: 12px;
@@ -78,6 +106,22 @@ body {
     color: #666;
 }
 
+/* Placeholder */
+.demo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    color: #999;
+}
+
+.demo-placeholder.hidden {
+    display: none;
+}
+
+/* Result box */
 .result-box {
     margin-top: 16px;
     padding: 12px;
@@ -88,15 +132,103 @@ body {
     white-space: pre-wrap;
     color: #333;
     display: none;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .result-box.show {
     display: block;
 }
 
+/* Action buttons */
 .action-btns {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
     margin: 16px 0;
+}
+
+/* Flag buttons for i18n demo */
+.flag-buttons {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.flag-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.flag-btn:hover {
+    border-color: #2563eb;
+    background: #f9fafb;
+}
+
+.flag-btn.active {
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.flag-icon {
+    font-size: 1.5rem;
+}
+
+/* Mobile: Stack layout */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 16px;
+    }
+
+    .demo-layout {
+        flex-direction: column;
+        gap: 16px;
+        min-height: auto;
+    }
+
+    .demo-sidebar {
+        width: 100%;
+        max-height: none;
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .demo-btn {
+        padding: 12px;
+    }
+
+    .demo-btn h3 {
+        font-size: 0.9rem;
+    }
+
+    .demo-btn p {
+        font-size: 0.75em;
+    }
+
+    .demo-panel {
+        padding: 16px;
+    }
+
+    .demo-placeholder {
+        display: none;
+    }
+
+    .flag-buttons {
+        flex-direction: column;
+    }
+
+    .flag-btn {
+        justify-content: center;
+    }
 }

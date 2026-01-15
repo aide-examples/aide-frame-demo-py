@@ -8,64 +8,93 @@
     <link rel="stylesheet" href="/static/demo/demo.css">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         <div id="app-header"></div>
 
-        <p id="app-subtitle" style="color: var(--text-secondary); margin-bottom: 24px;"></p>
+        <p id="app-subtitle" class="app-subtitle"></p>
 
-        <div class="demo-grid" id="demo-grid"></div>
+        <div class="demo-layout">
+            <!-- Sidebar with demo list -->
+            <aside class="demo-sidebar" id="demo-grid"></aside>
 
-        <!-- HTTP Call Demo -->
-        <div class="demo-panel" id="panel-http_call">
-            <h2 data-i18n="http_title">HTTP API Call</h2>
-            <p data-i18n="http_desc">Test the HTTP API endpoint</p>
-            <div class="form-group">
-                <input type="text" id="http-name" data-i18n-placeholder="http_placeholder">
-            </div>
-            <button onclick="runHttpDemo()" class="wide" data-i18n="http_button">Send Request</button>
-            <div class="result-box" id="http-result"></div>
-        </div>
+            <!-- Main content area -->
+            <main class="demo-content">
+                <!-- HTTP Call Demo -->
+                <div class="demo-panel" id="panel-http_call">
+                    <h2 data-i18n="http_title">HTTP API Call</h2>
+                    <p data-i18n="http_desc">Test the HTTP API endpoint</p>
+                    <div class="form-group">
+                        <input type="text" id="http-name" data-i18n-placeholder="http_placeholder">
+                    </div>
+                    <button onclick="runHttpDemo()" class="wide" data-i18n="http_button">Send Request</button>
+                    <div class="result-box" id="http-result"></div>
+                </div>
 
-        <!-- Config Demo -->
-        <div class="demo-panel" id="panel-config">
-            <h2 data-i18n="config_title">Configuration</h2>
-            <p data-i18n="config_desc">View paths and configuration</p>
-            <div class="action-btns">
-                <button onclick="runConfigDemo('show_paths')" data-i18n="config_paths">Show Paths</button>
-                <button onclick="runConfigDemo('load_config')" data-i18n="config_load">Load Config</button>
-            </div>
-            <div class="result-box" id="config-result"></div>
-        </div>
+                <!-- Config Demo -->
+                <div class="demo-panel" id="panel-config">
+                    <h2 data-i18n="config_title">Configuration</h2>
+                    <p data-i18n="config_desc">View paths and configuration</p>
+                    <div class="action-btns">
+                        <button onclick="runConfigDemo('show_paths')" data-i18n="config_paths">Show Paths</button>
+                        <button onclick="runConfigDemo('load_config')" data-i18n="config_load">Load Config</button>
+                    </div>
+                    <div class="result-box" id="config-result"></div>
+                </div>
 
-        <!-- Logging Demo -->
-        <div class="demo-panel" id="panel-logging">
-            <h2 data-i18n="logging_title">Logging</h2>
-            <p data-i18n="logging_desc">Test logging functionality</p>
-            <div class="form-group">
-                <label data-i18n="logging_level">Log Level</label>
-                <select id="log-level" onchange="runLoggingDemo('set_level')">
-                    <option value="DEBUG">DEBUG</option>
-                    <option value="INFO" selected>INFO</option>
-                    <option value="WARNING">WARNING</option>
-                    <option value="ERROR">ERROR</option>
-                </select>
-            </div>
-            <button onclick="runLoggingDemo('log')" class="wide" data-i18n="logging_send">Send Log Message</button>
-            <div class="result-box" id="logging-result"></div>
-        </div>
+                <!-- Logging Demo -->
+                <div class="demo-panel" id="panel-logging">
+                    <h2 data-i18n="logging_title">Logging</h2>
+                    <p data-i18n="logging_desc">Test logging functionality</p>
+                    <div class="form-group">
+                        <label data-i18n="logging_level">Log Level</label>
+                        <select id="log-level" onchange="runLoggingDemo('set_level')">
+                            <option value="DEBUG">DEBUG</option>
+                            <option value="INFO" selected>INFO</option>
+                            <option value="WARNING">WARNING</option>
+                            <option value="ERROR">ERROR</option>
+                        </select>
+                    </div>
+                    <button onclick="runLoggingDemo('log')" class="wide" data-i18n="logging_send">Send Log Message</button>
+                    <div class="result-box" id="logging-result"></div>
+                </div>
 
-        <!-- QR Code Demo -->
-        <div class="demo-panel" id="panel-qrcode">
-            <h2 data-i18n="qr_title">QR Code</h2>
-            <p data-i18n="qr_desc">Generate QR codes</p>
-            <p style="font-size: 0.85em; color: #888;" data-i18n="qr_requires">Requires qrcode library</p>
-            <div class="form-group">
-                <input type="text" id="qr-text" data-i18n-placeholder="qr_placeholder">
-            </div>
-            <button onclick="runQrDemo()" class="wide" data-i18n="qr_button">Generate QR</button>
-            <div id="qr-result" style="display: none; margin-top: 16px; text-align: center;">
-                <img id="qr-image" style="max-width: 200px; image-rendering: pixelated;">
-            </div>
+                <!-- QR Code Demo -->
+                <div class="demo-panel" id="panel-qrcode">
+                    <h2 data-i18n="qr_title">QR Code</h2>
+                    <p data-i18n="qr_desc">Generate QR codes</p>
+                    <p style="font-size: 0.85em; color: #888;" data-i18n="qr_requires">Requires qrcode library</p>
+                    <div class="form-group">
+                        <input type="text" id="qr-text" data-i18n-placeholder="qr_placeholder">
+                    </div>
+                    <button onclick="runQrDemo()" class="wide" data-i18n="qr_button">Generate QR</button>
+                    <div id="qr-result" style="display: none; margin-top: 16px; text-align: center;">
+                        <img id="qr-image" style="max-width: 200px; image-rendering: pixelated;">
+                    </div>
+                </div>
+
+                <!-- i18n Demo -->
+                <div class="demo-panel" id="panel-i18n">
+                    <h2 data-i18n="i18n_title">Internationalization</h2>
+                    <p data-i18n="i18n_desc">Switch UI language with flag buttons</p>
+                    <p id="i18n-current" style="margin: 16px 0; font-size: 0.9em; color: #666;"></p>
+                    <div class="flag-buttons">
+                        <button onclick="switchLanguage('en')" class="flag-btn" title="English">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span>English</span>
+                        </button>
+                        <button onclick="switchLanguage('de')" class="flag-btn" title="Deutsch">
+                            <span class="flag-icon">🇩🇪</span>
+                            <span>Deutsch</span>
+                        </button>
+                    </div>
+                    <div class="result-box" id="i18n-result"></div>
+                </div>
+
+                <!-- Placeholder when no demo selected -->
+                <div class="demo-placeholder" id="demo-placeholder">
+                    <p data-i18n="select_demo">Select a demo from the list</p>
+                </div>
+            </main>
         </div>
 
         <!-- Status Widget -->
