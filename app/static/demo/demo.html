@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="app_title">AIDE Frame Demo</title>
+    <link rel="stylesheet" href="/static/frame/css/base.css">
+    <link rel="stylesheet" href="/static/demo/demo.css">
+</head>
+<body>
+    <div class="container">
+        <div id="app-header"></div>
+
+        <p id="app-subtitle" style="color: var(--text-secondary); margin-bottom: 24px;"></p>
+
+        <div class="demo-grid" id="demo-grid"></div>
+
+        <!-- HTTP Call Demo -->
+        <div class="demo-panel" id="panel-http_call">
+            <h2 data-i18n="http_title">HTTP API Call</h2>
+            <p data-i18n="http_desc">Test the HTTP API endpoint</p>
+            <div class="form-group">
+                <input type="text" id="http-name" data-i18n-placeholder="http_placeholder">
+            </div>
+            <button onclick="runHttpDemo()" class="wide" data-i18n="http_button">Send Request</button>
+            <div class="result-box" id="http-result"></div>
+        </div>
+
+        <!-- Config Demo -->
+        <div class="demo-panel" id="panel-config">
+            <h2 data-i18n="config_title">Configuration</h2>
+            <p data-i18n="config_desc">View paths and configuration</p>
+            <div class="action-btns">
+                <button onclick="runConfigDemo('show_paths')" data-i18n="config_paths">Show Paths</button>
+                <button onclick="runConfigDemo('load_config')" data-i18n="config_load">Load Config</button>
+            </div>
+            <div class="result-box" id="config-result"></div>
+        </div>
+
+        <!-- Logging Demo -->
+        <div class="demo-panel" id="panel-logging">
+            <h2 data-i18n="logging_title">Logging</h2>
+            <p data-i18n="logging_desc">Test logging functionality</p>
+            <div class="form-group">
+                <label data-i18n="logging_level">Log Level</label>
+                <select id="log-level" onchange="runLoggingDemo('set_level')">
+                    <option value="DEBUG">DEBUG</option>
+                    <option value="INFO" selected>INFO</option>
+                    <option value="WARNING">WARNING</option>
+                    <option value="ERROR">ERROR</option>
+                </select>
+            </div>
+            <button onclick="runLoggingDemo('log')" class="wide" data-i18n="logging_send">Send Log Message</button>
+            <div class="result-box" id="logging-result"></div>
+        </div>
+
+        <!-- QR Code Demo -->
+        <div class="demo-panel" id="panel-qrcode">
+            <h2 data-i18n="qr_title">QR Code</h2>
+            <p data-i18n="qr_desc">Generate QR codes</p>
+            <p style="font-size: 0.85em; color: #888;" data-i18n="qr_requires">Requires qrcode library</p>
+            <div class="form-group">
+                <input type="text" id="qr-text" data-i18n-placeholder="qr_placeholder">
+            </div>
+            <button onclick="runQrDemo()" class="wide" data-i18n="qr_button">Generate QR</button>
+            <div id="qr-result" style="display: none; margin-top: 16px; text-align: center;">
+                <img id="qr-image" style="max-width: 200px; image-rendering: pixelated;">
+            </div>
+        </div>
+
+        <!-- Status Widget -->
+        <div id="status-widget" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="/static/frame/vendor/polyglot/polyglot.min.js"></script>
+    <script src="/static/frame/js/i18n.js"></script>
+    <script src="/static/frame/js/header-widget.js"></script>
+    <script src="/static/frame/js/status-widget.js"></script>
+    <script src="/static/demo/demo.js"></script>
+</body>
+</html>

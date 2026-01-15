@@ -1,0 +1,102 @@
+/**
+ * Demo page styles
+ */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+}
+
+.demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.demo-btn {
+    padding: 20px;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: block;
+    text-decoration: none;
+}
+
+.demo-btn:hover {
+    border-color: #2563eb;
+    background: #f9fafb !important;
+}
+
+.demo-btn:hover h3 {
+    color: #1d4ed8;
+}
+
+.demo-btn:hover p {
+    color: #333;
+}
+
+.demo-btn.active {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.demo-btn h3 {
+    margin: 0 0 8px 0;
+    color: #2563eb;
+}
+
+.demo-btn p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.demo-panel {
+    display: none;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 12px;
+}
+
+.demo-panel.active {
+    display: block;
+}
+
+.demo-panel h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.demo-panel p {
+    color: #666;
+}
+
+.result-box {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    color: #333;
+    display: none;
+}
+
+.result-box.show {
+    display: block;
+}
+
+.action-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}

@@ -50,7 +50,7 @@ class HelloHandler(http_server.JsonHandler):
 
     def get(self, path, params):
         if path == '/' or path == '/index.html':
-            return self.file('index.html')
+            return self.file('demo/demo.html')
         if path == '/api/demos':
             return {"demos": list(DEMOS.keys())}
         return {"error": "Not found"}, 404
