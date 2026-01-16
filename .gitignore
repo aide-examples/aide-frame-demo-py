@@ -6,3 +6,4 @@ deploy/
 
 # User config (not tracked, copy from sample_config.json)
 app/config.json
+releases/
