@@ -77,7 +77,6 @@ if __name__ == '__main__':
 
     config = apply_common_args(
         args,
-        config_search_paths=[os.path.join(PROJECT_DIR, 'config.json')],
         config_defaults=DEFAULT_CONFIG
     )
 

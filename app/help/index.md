@@ -1,6 +1,6 @@
 # AIDE Frame Demo - Help
 
-An interactive demo showcasing the features of the aide-frame framework.
+An interactive demo showcasing the features of the [aide-frame](https://github.com/aide-examples/aide-frame) framework.
 
 ## Available Demos
 

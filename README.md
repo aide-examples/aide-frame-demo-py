@@ -1,6 +1,6 @@
-# aide-frame-demo-py
+# AIDE - Frame Demo (Python)
 
-An interactive demo application showcasing the features of the aide-frame framework.
+An interactive demo application showcasing the features of the [aide-frame](https://github.com/aide-examples/aide-frame)framework.
 
 This is the Python version. A JavaScript version (aide-frame-demo-js) will be available once aide-frame adds JavaScript support.
 
