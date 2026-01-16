@@ -75,6 +75,10 @@ if __name__ == '__main__':
     parser.add_argument('--port', '-p', type=int, help='Override port')
     args = parser.parse_args()
 
+    # Resolve config path relative to SCRIPT_DIR
+    if not os.path.isabs(args.config):
+        args.config = os.path.join(SCRIPT_DIR, args.config)
+
     config = apply_common_args(
         args,
         config_defaults=DEFAULT_CONFIG
