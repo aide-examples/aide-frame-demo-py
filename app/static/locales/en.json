@@ -13,6 +13,8 @@
     "demo_i18n_desc": "Multi-language UI support",
     "demo_markdown": "Markdown",
     "demo_markdown_desc": "Rendered markdown with Mermaid",
+    "demo_new_app": "Start Your Own App",
+    "demo_new_app_desc": "Create a new aide-frame application",
     "http_title": "HTTP API Call",
     "http_desc": "Fetch gender prediction from Genderize.io API.",
     "http_placeholder": "Enter a name (e.g., Max, Anna)",
