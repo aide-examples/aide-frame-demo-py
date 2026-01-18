@@ -4,7 +4,7 @@
 
 // DEMOS config - uses i18n keys
 const DEMO_CONFIG = {
-    new_app: { titleKey: 'demo_new_app', descKey: 'demo_new_app_desc', link: '/sample_docs?doc=01-start-your-own-app.md' },
+    new_app: { titleKey: 'demo_new_app', descKey: 'demo_new_app_desc', link: '/sample_docs?doc=start-your-own-app.md' },
     http_call: { titleKey: 'demo_http', descKey: 'demo_http_desc' },
     config: { titleKey: 'demo_config', descKey: 'demo_config_desc' },
     logging: { titleKey: 'demo_logging', descKey: 'demo_logging_desc' },
