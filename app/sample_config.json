@@ -1,0 +1,14 @@
+{
+    "_comment": "Copy this file to config.json and customize for your app",
+    "port": 8082,
+    "pwa": {
+        "enabled": true,
+        "name": "AIDE Demo",
+        "short_name": "AIDEDemo",
+        "description": "AIDE Frame Python Demo Application",
+        "theme_color": "#306998",
+        "background_color": "#ffffff",
+        "icon_192": "/static/icons/icon-192.svg",
+        "icon_512": "/static/icons/icon-512.svg"
+    }
+}
