@@ -62,6 +62,7 @@ When creating the new app:
 5. Create files by adapting from demo:
    - `run` (change script name, make executable with `chmod +x run`)
    - `app/config.json` (set port and PWA settings - see aide-frame/python/aide_frame/config_sample.json)
+   - `app/config_sample.json` (copy of config.json for version control)
    - `app/VERSION` (start at 0.1)
    - `app/{APP_NAME_LOWER}.py` (simplified server)
    - `app/static/{APP_NAME_LOWER}/{APP_NAME_LOWER}.html` (minimal page with header, content, footer area with status information, include manifest link and PWA.init())
