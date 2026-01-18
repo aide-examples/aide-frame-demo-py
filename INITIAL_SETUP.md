@@ -55,7 +55,7 @@ When creating the new app:
    .DS_Store
    deploy/
 
-   # User config (not tracked, copy from sample_config.json)
+   # User config (not tracked, copy from config_sample.json)
    app/config.json
    releases/
    ```
