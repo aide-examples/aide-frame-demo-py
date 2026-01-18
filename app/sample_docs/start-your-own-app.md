@@ -90,12 +90,64 @@ Claude will:
 | `app/help/index.md` | Help page content |
 | `.gitignore` | Excludes venv, __pycache__ |
 
+## Creating App Icons (PWA)
+
+Your app needs its own icons so users can install it as a distinct PWA. Create two SVG files:
+
+- `app/static/icons/icon-192.svg` (192x192 pixels)
+- `app/static/icons/icon-512.svg` (512x512 pixels)
+
+### SVG Template
+
+Use this template, customizing the colors and text:
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#YOUR_BG_COLOR"/>
+  <text x="96" y="120" font-family="Arial, sans-serif" font-size="80"
+        font-weight="bold" fill="#YOUR_TEXT_COLOR" text-anchor="middle">XX</text>
+</svg>
+```
+
+For the 512x512 version, change `width`, `height`, `viewBox` to 512, and adjust `font-size` to ~200 and `y` position to ~320.
+
+### Examples
+
+| App | Background | Text Color | Label |
+|-----|------------|------------|-------|
+| Python demo | `#306998` (blue) | `#FFD43B` (yellow) | Py |
+| Node.js demo | `#F7DF1E` (yellow) | `#000000` (black) | JS |
+| Your app | Choose your brand colors | Contrasting color | 2-3 letter abbreviation |
+
+### PWA Configuration
+
+Configure your icons in `app/config.json`:
+
+```json
+{
+    "port": 8086,
+    "pwa": {
+        "enabled": true,
+        "name": "Your App Name",
+        "short_name": "YourApp",
+        "description": "Brief description",
+        "theme_color": "#YOUR_BG_COLOR",
+        "background_color": "#ffffff",
+        "icon_192": "/static/icons/icon-192.svg",
+        "icon_512": "/static/icons/icon-512.svg"
+    }
+}
+```
+
+The `theme_color` should match your icon's background color for a cohesive look.
+
 ## After Setup
 
 1. Test: `./run` and open http://localhost:{PORT}
 2. Verify header, content, and footer work
-3. Commit: `git add . && git commit -m "Initial setup"`
-4. Delete `INITIAL_SETUP.md` (no longer needed)
+3. Test PWA: Check browser shows install option, try installing the app
+4. Commit: `git add . && git commit -m "Initial setup"`
+5. Delete `INITIAL_SETUP.md` (no longer needed)
 
 ## Notes
 
