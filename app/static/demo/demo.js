@@ -133,5 +133,4 @@ function updateI18nPanel() {
     updateI18nPanel();
     HeaderWidget.init('#app-header', { appName: i18n.t('app_title'), showGoogleTranslate: true });
     StatusWidget.init('#status-widget', { showRestart: false });
-    PWA.init();
 })();

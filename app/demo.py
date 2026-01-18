@@ -100,14 +100,7 @@ if __name__ == '__main__':
                     route="/sample_docs",
                     subdir="sample_docs",
                 )
-            },
-            pwa=http_routes.PWAConfig(
-                enabled=True,
-                name="AIDE Frame Demo",
-                short_name="AIDE Demo",
-                description="Interactive demonstrations of aide-frame features",
-                theme_color="#2563eb",
-            ),
+            }
         ),
         update_config=update_routes.UpdateConfig(
             github_repo="aide-examples/aide-hello",
