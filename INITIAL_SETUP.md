@@ -46,7 +46,7 @@ When creating the new app:
 2. Add aide-frame submodule: `git submodule add /home/gero/aide-examples/aide-frame aide-frame`
    - Check .gitmodules in demo for the exact source path if different
    - If git blocks file:// protocol: `git config --global protocol.file.allow always`
-3. Create directory structure: `mkdir -p app/static/{APP_NAME_LOWER} app/static/locales app/docs app/help`
+3. Create directory structure: `mkdir -p app/static/{APP_NAME_LOWER} app/static/locales app/static/icons app/docs app/help`
 4. Create `.gitignore` with:
    ```
    __pycache__/
@@ -61,13 +61,13 @@ When creating the new app:
    ```
 5. Create files by adapting from demo:
    - `run` (change script name, make executable with `chmod +x run`)
-   - `app/config.json` (set port)
-   - `app/sample_config.json` (copy of config.json for version control)
+   - `app/config.json` (set port and PWA settings - see aide-frame/python/aide_frame/config_sample.json)
    - `app/VERSION` (start at 0.1)
    - `app/{APP_NAME_LOWER}.py` (simplified server)
-   - `app/static/{APP_NAME_LOWER}/{APP_NAME_LOWER}.html` (minimal page with header, content, footer area with status information)
+   - `app/static/{APP_NAME_LOWER}/{APP_NAME_LOWER}.html` (minimal page with header, content, footer area with status information, include manifest link and PWA.init())
    - `app/static/{APP_NAME_LOWER}/{APP_NAME_LOWER}.js` (widget init only)
    - `app/static/{APP_NAME_LOWER}/{APP_NAME_LOWER}.css` (minimal styles)
+   - `app/static/icons/icon-192.svg` and `icon-512.svg` (app-specific PWA icons)
    - `app/static/locales/en.json`, `de.json`, `es.json` (app_title and hello only)
    - `app/docs/index.md` (adapt from demo, describe your app)
    - `app/help/index.md` (adapt from demo, describe your app)
@@ -79,6 +79,8 @@ After setup, verify at http://localhost:{PORT}:
 - Header shows APP_NAME with language selector
 - Body shows "Hello"
 - Footer area shows version/platform status information
+- PWA: Check browser DevTools → Application → Manifest (should show app name and icons)
+- PWA: Check browser DevTools → Application → Service Workers (should be registered)
 
 ### 6. Final Message to User
 

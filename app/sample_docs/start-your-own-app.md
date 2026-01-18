@@ -1,7 +1,5 @@
 # Start Your Own App
 
-> **DISCLAIMER**: These instructions are currently copied from the Node.js demo and must be adapted for Python before use. The setup process, file structure, and commands differ between the two implementations.
-
 Create a new aide-frame application with Claude's help.
 
 ## Overview
@@ -83,9 +81,10 @@ Claude will:
 | `requirements.txt` | Python dependencies |
 | `run` | Startup script |
 | `app/{name}.py` | Server entry point |
-| `app/config.yaml` | Configuration |
+| `app/config.json` | Configuration (port, PWA settings) |
 | `app/VERSION` | Version number |
 | `app/static/{name}/` | HTML, JS, CSS |
+| `app/static/icons/` | PWA icons (icon-192.svg, icon-512.svg) |
 | `app/static/locales/` | i18n translations |
 | `app/docs/index.md` | About page content |
 | `app/help/index.md` | Help page content |
