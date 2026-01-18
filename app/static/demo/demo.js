@@ -4,13 +4,13 @@
 
 // DEMOS config - uses i18n keys
 const DEMO_CONFIG = {
+    new_app: { titleKey: 'demo_new_app', descKey: 'demo_new_app_desc', link: '/sample_docs?doc=01-start-your-own-app.md' },
     http_call: { titleKey: 'demo_http', descKey: 'demo_http_desc' },
     config: { titleKey: 'demo_config', descKey: 'demo_config_desc' },
     logging: { titleKey: 'demo_logging', descKey: 'demo_logging_desc' },
     qrcode: { titleKey: 'demo_qrcode', descKey: 'demo_qrcode_desc' },
     i18n: { titleKey: 'demo_i18n', descKey: 'demo_i18n_desc' },
-    markdown: { titleKey: 'demo_markdown', descKey: 'demo_markdown_desc', link: '/sample_docs?doc=markdown-demo.md' },
-    new_app: { titleKey: 'demo_new_app', descKey: 'demo_new_app_desc', link: '/sample_docs?doc=start-your-own-app.md' }
+    markdown: { titleKey: 'demo_markdown', descKey: 'demo_markdown_desc', link: '/sample_docs?doc=markdown-demo.md' }
 };
 
 let activeDemo = null;
