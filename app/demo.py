@@ -101,12 +101,7 @@ if __name__ == '__main__':
                     subdir="sample_docs",
                 )
             },
-            pwa=http_routes.PWAConfig(
-                enabled=True,
-                name="AIDE Frame Demo (Python)",
-                short_name="Demo-Py",
-                description="AIDE Frame Demo Application (Python)",
-            ),
+            pwa=http_routes.PWAConfig(**config.get('pwa', {})) if config.get('pwa', {}).get('enabled') else None,
         ),
         update_config=update_routes.UpdateConfig(
             github_repo="aide-examples/aide-hello",
