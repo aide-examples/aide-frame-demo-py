@@ -103,9 +103,9 @@ if __name__ == '__main__':
             },
             pwa=http_routes.PWAConfig(
                 enabled=True,
-                name="AIDE Demo",
-                short_name="Demo",
-                description="AIDE Frame Demo Application",
+                name="AIDE Frame Demo (Python)",
+                short_name="Demo-Py",
+                description="AIDE Frame Demo Application (Python)",
             ),
         ),
         update_config=update_routes.UpdateConfig(
