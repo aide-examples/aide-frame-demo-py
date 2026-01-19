@@ -141,6 +141,59 @@ Configure your icons in `app/config.json`:
 
 The `theme_color` should match your icon's background color for a cohesive look.
 
+## Layout Configuration
+
+Configure how your app's content is displayed:
+
+```json
+{
+    "layout": {
+        "default": "flow",
+        "allow_toggle": true
+    }
+}
+```
+
+| Option | Values | Description |
+|--------|--------|-------------|
+| `default` | `"flow"` or `"page-fill"` | Initial layout mode |
+| `allow_toggle` | `true` / `false` | Show toggle button in footer |
+
+### Layout Modes
+
+- **flow** (default): Content grows naturally, page scrolls. Best for mobile-first apps.
+- **page-fill**: Fixed viewport height, only content scrolls. Header and footer stay fixed. Good for data tables or dashboards.
+
+### HTML Structure for Page-Fill
+
+To support page-fill mode, wrap your scrollable content:
+
+```html
+<div class="app-container">
+    <div id="app-header"></div>
+    <main class="main-content">
+        <div class="scroll-content">
+            <!-- Your scrollable content here -->
+        </div>
+        <div id="status-widget"></div>
+    </main>
+</div>
+```
+
+### StatusWidget Options
+
+Pass the layout options to StatusWidget:
+
+```javascript
+StatusWidget.init('#status-widget', {
+    showRestart: true,
+    showLayoutToggle: true,   // Show the toggle button
+    layoutDefault: 'flow'     // Default mode
+});
+```
+
+User preference is saved to localStorage and persists across sessions.
+
 ## After Setup
 
 1. Test: `./run` and open http://localhost:{PORT}
