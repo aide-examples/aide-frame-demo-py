@@ -95,6 +95,56 @@ After successful setup, tell the user:
 > git commit -m "Initial project setup"
 > ```
 
+## Config File Structure
+
+Both `config.json` and `config_sample.json` must include all framework settings. App-specific settings can be added after the framework settings.
+
+**Required framework settings:**
+
+```json
+{
+    "_comment": "Copy this file to config.json and customize for your app",
+    "port": 8082,
+    "log_level": "INFO",
+    "docs_editable": false,
+    "pwa": {
+        "enabled": true,
+        "name": "Your App Name",
+        "short_name": "AppName",
+        "description": "Your app description",
+        "theme_color": "#306998",
+        "background_color": "#ffffff",
+        "icon_192": "/static/icons/icon-192.svg",
+        "icon_512": "/static/icons/icon-512.svg",
+        "icon": {
+            "background": "#306998",
+            "line1_text": "aide",
+            "line1_color": "#94a3b8",
+            "line1_size": 0.25,
+            "line2_text": "App",
+            "line2_color": "#ffffff",
+            "line2_size": 0.45
+        }
+    },
+    "layout": {
+        "default": "flow",
+        "allow_toggle": true
+    }
+}
+```
+
+**Settings explained:**
+- `port`: Server port number
+- `log_level`: Logging level (DEBUG, INFO, WARNING, ERROR)
+- `docs_editable`: Enable wiki-like chapter editing for /about documentation (default: false)
+- `pwa`: Progressive Web App configuration
+  - `icon_192`, `icon_512`: Paths to PWA icons (auto-generated if icon config provided)
+  - `icon`: Icon generation settings (background color, text lines with colors and sizes)
+- `layout.default`: Default layout mode ("flow" or "page-fill")
+- `layout.allow_toggle`: Allow user to switch between layout modes
+
+**Note:** The `_comment` field is optional and only used in `config_sample.json` to remind users to copy the file.
+
 ## Common Issues
 
 - **Port in use**: Use `--port XXXX` or change app/config.json
@@ -111,3 +161,96 @@ This guide defines numbered section headers, key patterns for args handling, Htt
 ## Important Notes
 
 **Locale files:** Translate `app_title` appropriately for each language, don't just copy the English name.
+
+## Client-Side Setup Requirements
+
+These requirements apply to both Python and JavaScript apps - they use the same client-side framework.
+
+### 1. Script Dependencies and Load Order
+
+The HTML must include scripts in this exact order:
+
+```html
+<script src="/static/frame/vendor/polyglot/polyglot.min.js"></script>
+<script src="/static/frame/js/i18n.js"></script>
+<script src="/static/frame/js/header-widget.js"></script>
+<script src="/static/frame/js/status-widget.js"></script>
+<script src="/static/frame/js/pwa.js"></script>
+<script src="/static/{app}/{app}.js"></script>
+```
+
+**Critical:** The `polyglot.min.js` script MUST be loaded before `i18n.js`. Missing this breaks all widget initialization because `i18n.init()` will fail silently.
+
+### 2. Widget Container Pattern
+
+Use empty divs with IDs - widgets render their own content:
+
+```html
+<div class="app-container page-fill">
+    <div id="app-header"></div>     <!-- HeaderWidget fills this -->
+
+    <main class="main-content">
+        <div class="scroll-content">
+            <!-- Your app content here -->
+        </div>
+    </main>
+
+    <div id="status-widget"></div>  <!-- StatusWidget fills this -->
+</div>
+```
+
+Do NOT create manual header/footer HTML - the widgets generate their structure.
+
+### 3. JavaScript Initialization Sequence
+
+In your app.js, initialize in this order:
+
+```javascript
+document.addEventListener('DOMContentLoaded', async () => {
+    await i18n.init();  // Must complete before widgets
+    HeaderWidget.init('#app-header', { appName: 'Your App Name' });
+    StatusWidget.init('#status-widget');
+    PWA.init();
+});
+```
+
+### 4. Page-Fill Layout Structure
+
+For page-fill layout (fixed viewport, internal scrolling):
+- Add `page-fill` class to `.app-container`
+- Wrap content in `<main class="main-content">` with `<div class="scroll-content">` inside
+- The framework CSS handles the flex layout automatically
+
+## Server-Side Setup Requirements (Python)
+
+### 1. paths.init() Must Be Called Early
+
+Call `paths.init(SCRIPT_DIR)` immediately after imports, **before** creating DocsConfig:
+
+```python
+from aide_frame import paths, config as config_module
+from aide_frame import http_server, http_routes, update_routes
+
+# Initialize paths early (before DocsConfig which needs APP_DIR)
+paths.init(SCRIPT_DIR)
+```
+
+**Critical:** DocsConfig auto-registers DOCS_DIR and HELP_DIR based on `paths.APP_DIR`. If paths.init() isn't called first, these directories won't be found and /about and /help will fail.
+
+### 2. Use python3 in run Script
+
+The `run` script should use `python3` explicitly:
+
+```bash
+#!/bin/bash
+cd "$(dirname "$0")/app"
+python3 {app}.py "$@"
+```
+
+### 3. Use log.set_level() Not setup_logging()
+
+The logging module provides `set_level()`, not `setup_logging()`:
+
+```python
+log.set_level(config.get('log_level', 'INFO'))
+```
