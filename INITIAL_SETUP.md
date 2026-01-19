@@ -101,6 +101,28 @@ After successful setup, tell the user:
 - **Git submodule file protocol error**: Run `git config --global protocol.file.allow always`
 - **"No config file found"**: Normal when running from project root; DEFAULT_CONFIG in server handles this
 
+## Code Structure Patterns
+
+All aide-frame applications should follow a consistent code structure for maintainability. The main entry file should be organized with numbered section headers in this order:
+
+1. **PATH SETUP** - Define SCRIPT_DIR, PROJECT_DIR, add aide-frame to path
+2. **AIDE-FRAME INIT** - Import paths module and call paths.init(SCRIPT_DIR)
+3. **AIDE-FRAME IMPORTS** - Import framework modules (http_server, http_routes, args, etc.)
+4. **APP IMPORTS** - Import application-specific modules
+5. **CONFIGURATION** - Define DEFAULT_CONFIG with sensible defaults
+6. **HTTP HANDLER** (Python) or skip (JS uses inline routes) - Define request handler class
+7. **ARGUMENT PARSING** - Use framework's args module (add_common_args, apply_common_args)
+8. **SERVER SETUP** - Create HttpServer with docsConfig and updateConfig
+9. **START SERVER** - Call server.run()
+
+Key patterns to follow:
+- Use the framework's args module for command-line parsing (--config, --log-level, --regenerate-icons are provided by add_common_args)
+- Let HttpServer auto-register docs/help and update routes when configs are provided
+- Pass PWA config to docsConfig for manifest.json serving
+- Keep DEFAULT_CONFIG inline for simple apps; use a separate config module only for complex apps
+- Don't mutate framework globals; pass configuration through constructors instead
+- Resolve config path relative to SCRIPT_DIR before calling apply_common_args
+
 ## Important Notes
 
 **Locale files:** Translate `app_title` appropriately for each language, don't just copy the English name.
