@@ -36,13 +36,13 @@ from aide_frame.args import add_common_args, apply_common_args
 from demos import DEMOS
 
 # =============================================================================
-# CONFIGURATION
+# 5. CONFIGURATION
 # =============================================================================
 
 DEFAULT_CONFIG = {"port": 8082}
 
 # =============================================================================
-# HTTP HANDLER
+# 6. HTTP HANDLER
 # =============================================================================
 
 class HelloHandler(http_server.JsonHandler):
@@ -65,11 +65,12 @@ class HelloHandler(http_server.JsonHandler):
         return {"error": "Not found"}, 404
 
 # =============================================================================
-# MAIN
+# 7. ARGUMENT PARSING
 # =============================================================================
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description='AIDE Frame Demo App')
     add_common_args(parser, config_default='config.json')
     parser.add_argument('--port', '-p', type=int, help='Override port')
@@ -87,6 +88,10 @@ if __name__ == '__main__':
 
     if args.port:
         config['port'] = args.port
+
+    # =========================================================================
+    # 8. SERVER SETUP
+    # =========================================================================
 
     server = http_server.HttpServer(
         port=config['port'],
@@ -109,4 +114,10 @@ if __name__ == '__main__':
             service_name="aide-hello"
         ),
     )
+    # Note: HttpServer auto-registers docs/help and update routes if configs provided
+
+    # =========================================================================
+    # 9. START SERVER
+    # =========================================================================
+
     server.run()
