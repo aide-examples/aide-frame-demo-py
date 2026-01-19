@@ -132,5 +132,27 @@ function updateI18nPanel() {
     initDemoGrid();
     updateI18nPanel();
     HeaderWidget.init('#app-header', { appName: i18n.t('app_title'), showGoogleTranslate: true });
-    StatusWidget.init('#status-widget', { showRestart: false });
+
+    // Get layout config and init StatusWidget
+    let layoutDefault = 'flow';
+    let layoutToggle = false;
+    try {
+        const configRes = await fetch('/api/demo/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'load_config' })
+        });
+        const configData = await configRes.json();
+        if (configData.config?.layout) {
+            layoutDefault = configData.config.layout.default || 'flow';
+            layoutToggle = configData.config.layout.allow_toggle || false;
+        }
+    } catch (e) {
+        console.warn('Could not load layout config:', e);
+    }
+    StatusWidget.init('#status-widget', {
+        showRestart: false,
+        showLayoutToggle: layoutToggle,
+        layoutDefault: layoutDefault
+    });
 })();
