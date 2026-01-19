@@ -1,5 +1,7 @@
 """Demo: Configuration loading with aide_frame.config."""
 
+import os
+
 from aide_frame import config, paths
 
 TITLE = "Configuration"
@@ -29,8 +31,13 @@ def run(data: dict) -> dict:
     elif action == 'load_config':
         # Demonstrate config loading with defaults
         defaults = {"port": 8080, "debug": False, "name": "Demo App"}
+        # Resolve config path relative to APP_DIR
+        config_path = data.get('config_path', 'config.json')
+        app_dir = paths.get("APP_DIR")
+        if app_dir and not os.path.isabs(config_path):
+            config_path = os.path.join(app_dir, config_path)
         cfg = config.load_config(
-            config_path=data.get('config_path', 'config.json'),
+            config_path=config_path,
             defaults=defaults
         )
         return {

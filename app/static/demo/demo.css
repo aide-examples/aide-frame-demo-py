@@ -21,6 +21,12 @@
     min-height: 500px;
 }
 
+/* Page-fill mode: layout fills available space */
+.app-container.page-fill .demo-layout {
+    flex: 1;
+    min-height: 0;
+}
+
 /* Sidebar */
 .demo-sidebar {
     width: 280px;
@@ -28,10 +34,11 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: calc(100vh - 200px);
+}
+
+/* Page-fill mode: sidebar gets its own scroll */
+.app-container.page-fill .demo-sidebar {
     overflow-y: auto;
-    position: sticky;
-    top: 20px;
 }
 
 /* Demo buttons in sidebar */
@@ -84,6 +91,11 @@
     min-width: 0;
 }
 
+/* Page-fill mode: content gets its own scroll */
+.app-container.page-fill .demo-content {
+    overflow-y: auto;
+}
+
 /* Demo panels */
 .demo-panel {
     display: none;
@@ -132,8 +144,6 @@
     white-space: pre-wrap;
     color: #333;
     display: none;
-    max-height: 400px;
-    overflow-y: auto;
 }
 
 .result-box.show {
