@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     subdir="sample_docs",
                 )
             },
-            pwa=http_routes.PWAConfig(**config.get('pwa', {})) if config.get('pwa', {}).get('enabled') else None,
+            pwa=http_routes.PWAConfig.from_dict(config.get('pwa', {})) if config.get('pwa', {}).get('enabled') else None,
         ),
         update_config=update_routes.UpdateConfig(
             github_repo="aide-examples/aide-hello",
