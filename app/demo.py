@@ -81,7 +81,8 @@ if __name__ == '__main__':
 
     config = apply_common_args(
         args,
-        config_defaults=DEFAULT_CONFIG
+        config_defaults=DEFAULT_CONFIG,
+        app_dir=SCRIPT_DIR
     )
 
     if args.port:
