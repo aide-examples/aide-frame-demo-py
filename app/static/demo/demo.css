@@ -2,11 +2,12 @@
  * Demo page styles - Responsive sidebar layout
  */
 
-/* App container */
+/* App container - extends base.css defaults */
 .app-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .app-subtitle {
@@ -198,10 +199,6 @@
 
 /* Mobile: Stack layout */
 @media (max-width: 768px) {
-    .app-container {
-        padding: 16px;
-    }
-
     .demo-layout {
         flex-direction: column;
         gap: 16px;

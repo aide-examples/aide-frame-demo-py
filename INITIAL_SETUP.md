@@ -43,11 +43,17 @@ When creating the new app:
 ### 4. Setup Steps
 
 1. Initialize git: `git init`
-2. Add aide-frame submodule: `git submodule add /home/gero/aide-examples/aide-frame aide-frame`
-   - Check .gitmodules in demo for the exact source path if different
-   - If git blocks file:// protocol: `git config --global protocol.file.allow always`
-3. Create directory structure: `mkdir -p app/static/{APP_NAME_LOWER} app/static/locales app/static/icons app/docs app/help`
-4. Create `.gitignore` with:
+2. Add aide-frame submodule from GitHub:
+   ```bash
+   git submodule add https://github.com/aide-examples/aide-frame.git aide-frame
+   ```
+3. For local development (optional), switch to symlink mode:
+   ```bash
+   ../aide-frame/dev-mode.sh
+   ```
+   See [aide-frame/docs/spec/app-structure.md](aide-frame/docs/spec/app-structure.md) for details on dev vs prod mode.
+4. Create directory structure: `mkdir -p app/static/{APP_NAME_LOWER} app/static/locales app/static/icons app/docs app/help`
+5. Create `.gitignore` with:
    ```
    __pycache__/
    *.pyc
@@ -59,7 +65,7 @@ When creating the new app:
    app/config.json
    releases/
    ```
-5. Create files by adapting from demo:
+6. Create files by adapting from demo:
    - `run` (change script name, make executable with `chmod +x run`)
    - `app/config.json` (set port and PWA settings - see aide-frame/python/aide_frame/config_sample.json)
    - `app/config_sample.json` (copy of config.json for version control)
@@ -72,7 +78,7 @@ When creating the new app:
    - `app/static/locales/en.json`, `de.json`, `es.json` (app_title and hello only)
    - `app/docs/index.md` (adapt from demo, describe your app)
    - `app/help/index.md` (adapt from demo, describe your app)
-6. Test with `./run`
+7. Test with `./run`
 
 ### 5. Verification
 
@@ -106,7 +112,6 @@ Both `config.json` and `config_sample.json` must include all framework settings.
     "_comment": "Copy this file to config.json and customize for your app",
     "port": 8082,
     "log_level": "INFO",
-    "docs_editable": false,
     "pwa": {
         "enabled": true,
         "name": "Your App Name",
@@ -136,7 +141,6 @@ Both `config.json` and `config_sample.json` must include all framework settings.
 **Settings explained:**
 - `port`: Server port number
 - `log_level`: Logging level (DEBUG, INFO, WARNING, ERROR)
-- `docs_editable`: Enable wiki-like chapter editing for /about documentation (default: false)
 - `pwa`: Progressive Web App configuration
   - `icon_192`, `icon_512`: Paths to PWA icons (auto-generated if icon config provided)
   - `icon`: Icon generation settings (background color, text lines with colors and sizes)
@@ -148,8 +152,7 @@ Both `config.json` and `config_sample.json` must include all framework settings.
 ## Common Issues
 
 - **Port in use**: Use `--port XXXX` or change app/config.json
-- **Git submodule file protocol error**: Run `git config --global protocol.file.allow always`
-- **"No config file found"**: Normal when running from project root; DEFAULT_CONFIG in server handles this
+- **"No config file found"**: Ensure config path is resolved relative to SCRIPT_DIR before calling apply_common_args - this is critical for PM2/systemd
 
 ## Code Structure Patterns
 

@@ -2,7 +2,8 @@
     "_comment": "Copy this file to config.json and customize for your app",
     "port": 8082,
     "log_level": "INFO",
-    "docs_editable": false,
+    "docsEditable": false,
+    "helpEditable": false,
     "pwa": {
         "enabled": true,
         "name": "AIDE Demo",
